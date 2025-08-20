@@ -1,0 +1,6 @@
+HEADER    SAMPLE PDB FILE
+ATOM      1  N   MET A   1      11.104  13.207   2.100  1.00 20.00           N
+ATOM      2  CA  MET A   1      12.560  13.207   2.100  1.00 20.00           C
+ATOM      3  C   MET A   1      13.104  14.607   2.100  1.00 20.00           C
+ATOM      4  O   MET A   1      12.560  15.607   2.100  1.00 20.00           O
+END 
