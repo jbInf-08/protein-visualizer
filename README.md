@@ -1,5 +1,15 @@
 # Protein Visualization Tool
 
+[![CI](https://github.com/jbInf-08/protein-visualizer/actions/workflows/ci.yml/badge.svg)](https://github.com/jbInf-08/protein-visualizer/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
+## Golden path
+
+```sh
+cmake -S . -B build
+cmake --build build --config Release
+```
+
 Desktop app for viewing protein structures (PDB) in 3D with **OpenGL 4.5 Core**, **GLFW**, **GLAD**, **GLM**, and **Dear ImGui**.
 
 ## Features
