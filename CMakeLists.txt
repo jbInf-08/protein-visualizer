@@ -20,22 +20,22 @@ set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 FetchContent_Declare(
   glfw
-  URL https://github.com/glfw/glfw/archive/refs/tags/3.4.tar.gz
-  DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+  GIT_REPOSITORY https://github.com/glfw/glfw.git
+  GIT_TAG a74efa0d5628b74adc0426af4c5710e287fa7c2c
 )
 FetchContent_MakeAvailable(glfw)
 
 FetchContent_Declare(
   glm
-  URL https://github.com/g-truc/glm/archive/refs/tags/1.0.1.tar.gz
-  DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+  GIT_REPOSITORY https://github.com/g-truc/glm.git
+  GIT_TAG 0af55ccecd98d4e5a8d1fad7de25ba429d60e863
 )
 FetchContent_MakeAvailable(glm)
 
 FetchContent_Declare(
   imgui
-  URL https://github.com/ocornut/imgui/archive/refs/tags/v1.91.0.tar.gz
-  DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+  GIT_REPOSITORY https://github.com/ocornut/imgui.git
+  GIT_TAG 8199457a7d9e453f8d3d9cadc14683fb54a858b5
 )
 FetchContent_MakeAvailable(imgui)
 
@@ -105,3 +105,15 @@ add_custom_command(
           "$<TARGET_FILE_DIR:ProteinVisualizer>/resources"
   COMMENT "Copy shaders and resources beside ProteinVisualizer"
 )
+
+enable_testing()
+add_executable(parser_smoke_test
+  tests/pdb_parser_smoke.cpp
+  src/model/Protein.cpp
+  src/utils/PDBParser.cpp
+  src/utils/MmCifParser.cpp
+  src/utils/StructureLoader.cpp
+)
+target_include_directories(parser_smoke_test PRIVATE "${CMAKE_SOURCE_DIR}/src" "${CMAKE_SOURCE_DIR}/external")
+target_link_libraries(parser_smoke_test PRIVATE glm::glm)
+add_test(NAME parser_smoke_test COMMAND parser_smoke_test "${CMAKE_SOURCE_DIR}/resources/1CRN.pdb")
