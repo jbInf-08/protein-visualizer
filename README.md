@@ -16,7 +16,7 @@ Desktop app for viewing protein structures (PDB) in 3D with **OpenGL 4.5 Core**,
 | Component | How it is provided |
 |-----------|-------------------|
 | **GLFW**, **ImGui**, **GLM** | Downloaded automatically on first **CMake configure** via `FetchContent` (requires network once) |
-| **GLAD** (OpenGL 4.5 core) | **Vendored** under `external/glad/` (regenerate locally if you change the GL API; see below) |
+| **GLAD** (OpenGL 4.5 core) | **Vendored** under `external/glad/` (generated code committed intentionally for reproducible/offline builds) |
 | **OpenGL** | System / driver (`find_package(OpenGL)`) |
 
 ## Prerequisites
@@ -48,6 +48,10 @@ If you change the OpenGL version or profile, regenerate the loader with the Pyth
 pip install glad
 glad --api gl=4.5 --profile core --generator c --out-path external/glad
 ```
+
+### Shader note
+
+`shaders/cylinder_instanced.frag` and `shaders/sphere_instanced.frag` intentionally share the same fragment logic today so instanced primitives render consistently while geometry stages differ.
 
 ## Usage
 

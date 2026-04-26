@@ -1,4 +1,5 @@
 #include "PDBParser.h"
+#include "BondDistanceConstants.h"
 
 #include "../model/SecondaryStructure.h"
 
@@ -190,28 +191,28 @@ bool IsMetalElement(const std::string& elem) {
 float MaxAllowedBondDistance(const Atom& a, const Atom& b) {
     const float ci = CovalentRadiusAngstrom(a.element);
     const float cj = CovalentRadiusAngstrom(b.element);
-    float cap = ci + cj + 0.48f;
+    float cap = ci + cj + BondDistanceConstants::kCovalentPaddingAngstrom;
     const char e1 = ElementKeyChar(a.element);
     const char e2 = ElementKeyChar(b.element);
     if (e1 == 'H' || e2 == 'H') {
-        cap = std::min(cap, 1.58f);
+        cap = std::min(cap, BondDistanceConstants::kHydrogenCapAngstrom);
     }
     if (e1 == 'O' && e2 == 'O') {
-        cap = std::min(cap, 1.62f);
+        cap = std::min(cap, BondDistanceConstants::kOxygenPairCapAngstrom);
     }
     if (e1 == 'N' && e2 == 'N') {
-        cap = std::min(cap, 1.62f);
+        cap = std::min(cap, BondDistanceConstants::kNitrogenPairCapAngstrom);
     }
     if (e1 == 'S' && e2 == 'S') {
-        cap = std::max(cap, 1.88f);
-        cap = std::min(cap, 2.15f);
+        cap = std::max(cap, BondDistanceConstants::kSulfurPairFloorAngstrom);
+        cap = std::min(cap, BondDistanceConstants::kSulfurPairCapAngstrom);
     }
     const bool metalPair = IsMetalElement(a.element) || IsMetalElement(b.element);
     if (metalPair) {
-        cap = std::max(cap, 2.35f);
-        cap = std::min(cap, 3.35f);
+        cap = std::max(cap, BondDistanceConstants::kMetalPairFloorAngstrom);
+        cap = std::min(cap, BondDistanceConstants::kMetalPairCapAngstrom);
     } else {
-        cap = std::min(cap, 2.88f);
+        cap = std::min(cap, BondDistanceConstants::kNonMetalCapAngstrom);
     }
     return cap;
 }
