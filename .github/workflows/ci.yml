@@ -13,16 +13,40 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-      - name: Configure
-        run: cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-      - name: Build
-        run: cmake --build build --config Release
-      - name: Parser smoke test
-        run: ctest --test-dir build --output-on-failure --build-config Release
-      - name: Headless runtime smoke (Linux)
+
+      - name: Install Linux GL/X11 dependencies
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
+          sudo apt-get install -y \
+            libgl1-mesa-dev \
+            libxrandr-dev \
+            libxinerama-dev \
+            libxcursor-dev \
+            libxi-dev \
+            libxext-dev \
+            libwayland-dev \
+            libxkbcommon-dev \
+            xorg-dev
+
+      - name: Install macOS dependencies
+        if: runner.os == 'macOS'
+        run: |
+          # Xcode command-line tools provide OpenGL framework
+          xcode-select -p || sudo xcode-select --install || true
+
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+      - name: Build
+        run: cmake --build build --config Release
+
+      - name: Parser smoke test
+        run: ctest --test-dir build --output-on-failure --build-config Release
+
+      - name: Headless runtime smoke (Linux)
+        if: runner.os == 'Linux'
+        run: |
           sudo apt-get install -y xvfb
           timeout 6s xvfb-run -a ./build/ProteinVisualizer || test $? -eq 124
 
@@ -30,15 +54,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-      - name: Install clang tools
+
+      - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang-format clang-tidy
+          sudo apt-get install -y \
+            clang-format clang-tidy \
+            libgl1-mesa-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev \
+            libxext-dev libwayland-dev libxkbcommon-dev xorg-dev
+
       - name: Configure compile commands
         run: cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
       - name: Enforce clang-format
         run: |
           find src tests -type f \( -name "*.cpp" -o -name "*.h" \) -print0 | xargs -0 clang-format --dry-run --Werror
+
       - name: Run clang-tidy smoke
-        run: |
-          clang-tidy src/utils/StructureLoader.cpp -p build
+        run: clang-tidy src/utils/StructureLoader.cpp -p build
