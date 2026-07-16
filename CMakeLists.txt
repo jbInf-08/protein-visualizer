@@ -8,7 +8,10 @@ if(MSVC)
   set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
 endif()
 
-project(ProteinVisualizer LANGUAGES CXX)
+# C is required alongside CXX: GLFW (fetched below) is a C library, and without
+# enabling C here CMake never sets up C compiler rules for it (CMAKE_C_COMPILE_OBJECT
+# etc. stay unset, breaking the generated build files).
+project(ProteinVisualizer LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
