@@ -10,10 +10,10 @@
 
 namespace {
 
-bool EndsWithCif(const std::string& path) {
+bool EndsWithCif(const std::string &path) {
     const std::filesystem::path p(path);
     std::string ext = p.extension().string();
-    for (char& c : ext) {
+    for (char &c : ext) {
         c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
     }
     return ext == ".cif" || ext == ".mmcif";
@@ -21,7 +21,7 @@ bool EndsWithCif(const std::string& path) {
 
 } // namespace
 
-Protein StructureLoader::Load(const std::string& filepath) {
+Protein StructureLoader::Load(const std::string &filepath) {
     if (filepath.empty()) {
         throw std::runtime_error("Empty path.");
     }

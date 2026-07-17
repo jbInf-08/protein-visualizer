@@ -7,7 +7,8 @@
 namespace Picking {
 namespace {
 
-glm::vec3 ScreenRayDir(float mouseX, float mouseY, int fbW, int fbH, const glm::mat4& invVp, glm::vec3* rayOrigin) {
+glm::vec3 ScreenRayDir(float mouseX, float mouseY, int fbW, int fbH, const glm::mat4 &invVp,
+                       glm::vec3 *rayOrigin) {
     const float w = static_cast<float>(std::max(1, fbW));
     const float h = static_cast<float>(std::max(1, fbH));
     const float xNdc = (2.0f * mouseX / w) - 1.0f;
@@ -25,7 +26,8 @@ glm::vec3 ScreenRayDir(float mouseX, float mouseY, int fbW, int fbH, const glm::
     return dir / len;
 }
 
-bool RaySphereFirstHit(const glm::vec3& ro, const glm::vec3& rd, const glm::vec3& center, float radius, float* outT) {
+bool RaySphereFirstHit(const glm::vec3 &ro, const glm::vec3 &rd, const glm::vec3 &center, float radius,
+                       float *outT) {
     if (radius <= 0.0f) {
         return false;
     }
@@ -48,15 +50,16 @@ bool RaySphereFirstHit(const glm::vec3& ro, const glm::vec3& rd, const glm::vec3
     return true;
 }
 
-glm::vec3 CatmullRom(const glm::vec3& p0, const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, float t) {
+glm::vec3 CatmullRom(const glm::vec3 &p0, const glm::vec3 &p1, const glm::vec3 &p2, const glm::vec3 &p3,
+                     float t) {
     const float t2 = t * t;
     const float t3 = t2 * t;
     return 0.5f * ((2.0f * p1) + (-p0 + p2) * t + (2.0f * p0 - 5.0f * p1 + 4.0f * p2 - p3) * t2 +
                    (-p0 + 3.0f * p1 - 3.0f * p2 + p3) * t3);
 }
 
-bool RayCapsuleFirstHit(const glm::vec3& ro, const glm::vec3& rd, const glm::vec3& a, const glm::vec3& b, float radius,
-                        float* outT) {
+bool RayCapsuleFirstHit(const glm::vec3 &ro, const glm::vec3 &rd, const glm::vec3 &a, const glm::vec3 &b,
+                        float radius, float *outT) {
     const glm::vec3 ba = b - a;
     const glm::vec3 oa = ro - a;
     const float baba = glm::dot(ba, ba);
@@ -105,13 +108,13 @@ struct SmoothSeg {
     glm::vec3 b{0.0f};
 };
 
-std::vector<SmoothSeg> BuildSmoothSegments(const Protein& protein) {
+std::vector<SmoothSeg> BuildSmoothSegments(const Protein &protein) {
     std::vector<SmoothSeg> out;
     if (!protein.HasCaTubeSegments()) {
         return out;
     }
-    const auto& atoms = protein.GetAtoms();
-    const auto& segs = protein.GetCaTubeSegments();
+    const auto &atoms = protein.GetAtoms();
+    const auto &segs = protein.GetCaTubeSegments();
     std::vector<int> trace;
     auto flushTrace = [&]() {
         if (trace.size() < 2) {
@@ -145,7 +148,7 @@ std::vector<SmoothSeg> BuildSmoothSegments(const Protein& protein) {
         }
         trace.clear();
     };
-    for (const auto& e : segs) {
+    for (const auto &e : segs) {
         if (trace.empty()) {
             trace.push_back(e.first);
             trace.push_back(e.second);
@@ -165,9 +168,9 @@ std::vector<SmoothSeg> BuildSmoothSegments(const Protein& protein) {
 
 } // namespace
 
-std::optional<int> PickAtomIndexScreen(const Protein& protein, float mouseX, float mouseY, int framebufferWidth,
-                                       int framebufferHeight, const glm::mat4& view, const glm::mat4& projection,
-                                       VisualizationMode mode) {
+std::optional<int> PickAtomIndexScreen(const Protein &protein, float mouseX, float mouseY,
+                                       int framebufferWidth, int framebufferHeight, const glm::mat4 &view,
+                                       const glm::mat4 &projection, VisualizationMode mode) {
     const glm::mat4 vp = projection * view;
     const glm::mat4 invVp = glm::inverse(vp);
     glm::vec3 ro{};
@@ -176,9 +179,9 @@ std::optional<int> PickAtomIndexScreen(const Protein& protein, float mouseX, flo
     float bestT = std::numeric_limits<float>::infinity();
     int bestIndex = -1;
 
-    const auto& atoms = protein.GetAtoms();
+    const auto &atoms = protein.GetAtoms();
     for (int i = 0; i < static_cast<int>(atoms.size()); ++i) {
-        const Atom& a = atoms[static_cast<size_t>(i)];
+        const Atom &a = atoms[static_cast<size_t>(i)];
         const float scale = Renderer::RadiusScaleForMode(mode, a.radius);
         const float r = std::max(0.05f, a.radius * scale);
         float t = 0.0f;
@@ -191,14 +194,15 @@ std::optional<int> PickAtomIndexScreen(const Protein& protein, float mouseX, flo
     if (mode == VisualizationMode::BallAndStick && protein.HasBonds()) {
         constexpr float kStickRadius = 0.18f;
         constexpr float kBallScale = 0.32f;
-        for (const auto& e : protein.GetBonds()) {
+        for (const auto &e : protein.GetBonds()) {
             const int ia = e.first;
             const int ib = e.second;
-            if (ia < 0 || ib < 0 || ia >= static_cast<int>(atoms.size()) || ib >= static_cast<int>(atoms.size())) {
+            if (ia < 0 || ib < 0 || ia >= static_cast<int>(atoms.size()) ||
+                ib >= static_cast<int>(atoms.size())) {
                 continue;
             }
-            const Atom& A = atoms[static_cast<size_t>(ia)];
-            const Atom& B = atoms[static_cast<size_t>(ib)];
+            const Atom &A = atoms[static_cast<size_t>(ia)];
+            const Atom &B = atoms[static_cast<size_t>(ib)];
             const glm::vec3 delta = B.position - A.position;
             const float len = glm::length(delta);
             if (len < 1.0e-5f) {
@@ -220,7 +224,7 @@ std::optional<int> PickAtomIndexScreen(const Protein& protein, float mouseX, flo
     if (mode == VisualizationMode::Ribbon || mode == VisualizationMode::Cartoon) {
         const float tubePickR = (mode == VisualizationMode::Cartoon) ? 0.36f : 0.30f;
         const std::vector<SmoothSeg> segs = BuildSmoothSegments(protein);
-        for (const SmoothSeg& seg : segs) {
+        for (const SmoothSeg &seg : segs) {
             float t = 0.0f;
             if (RayCapsuleFirstHit(ro, rd, seg.a, seg.b, tubePickR, &t) && t < bestT) {
                 bestT = t;

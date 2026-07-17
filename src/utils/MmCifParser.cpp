@@ -13,7 +13,7 @@
 
 namespace {
 
-std::string Trim(const std::string& s) {
+std::string Trim(const std::string &s) {
     size_t a = 0;
     size_t b = s.size();
     while (a < b && std::isspace(static_cast<unsigned char>(s[a]))) {
@@ -25,7 +25,7 @@ std::string Trim(const std::string& s) {
     return s.substr(a, b - a);
 }
 
-std::vector<std::string> SplitCifLine(const std::string& line) {
+std::vector<std::string> SplitCifLine(const std::string &line) {
     std::vector<std::string> tok;
     std::string cur;
     bool inQuote = false;
@@ -50,7 +50,7 @@ std::vector<std::string> SplitCifLine(const std::string& line) {
     return tok;
 }
 
-int ParseIntLoose(const std::string& s) {
+int ParseIntLoose(const std::string &s) {
     const std::string t = Trim(s);
     if (t.empty() || t == "?" || t == ".") {
         return 0;
@@ -62,7 +62,7 @@ int ParseIntLoose(const std::string& s) {
     }
 }
 
-float ParseFloatLoose(const std::string& s) {
+float ParseFloatLoose(const std::string &s) {
     const std::string t = Trim(s);
     if (t.empty() || t == "?" || t == ".") {
         return 0.0f;
@@ -74,7 +74,7 @@ float ParseFloatLoose(const std::string& s) {
     }
 }
 
-float VdwRadiusForElement(const std::string& elem) {
+float VdwRadiusForElement(const std::string &elem) {
     if (elem.empty()) {
         return 1.5f;
     }
@@ -83,27 +83,27 @@ float VdwRadiusForElement(const std::string& elem) {
         return 1.7f;
     }
     switch (e) {
-        case 'H':
-            return 1.2f;
-        case 'C':
-            return 1.7f;
-        case 'N':
-            return 1.55f;
-        case 'O':
-            return 1.52f;
-        case 'S':
-            return 1.8f;
-        case 'P':
-            return 1.8f;
-        case 'F':
-            return 1.47f;
-        default:
-            return 1.5f;
+    case 'H':
+        return 1.2f;
+    case 'C':
+        return 1.7f;
+    case 'N':
+        return 1.55f;
+    case 'O':
+        return 1.52f;
+    case 'S':
+        return 1.8f;
+    case 'P':
+        return 1.8f;
+    case 'F':
+        return 1.47f;
+    default:
+        return 1.5f;
     }
 }
 
-std::string ElementFromMmCifRow(const std::unordered_map<std::string, int>& col,
-                                  const std::vector<std::string>& fields) {
+std::string ElementFromMmCifRow(const std::unordered_map<std::string, int> &col,
+                                const std::vector<std::string> &fields) {
     const auto itSym = col.find("type_symbol");
     if (itSym != col.end()) {
         const int k = itSym->second;
@@ -111,7 +111,7 @@ std::string ElementFromMmCifRow(const std::unordered_map<std::string, int>& col,
             const std::string s = Trim(fields[static_cast<size_t>(k)]);
             if (!s.empty() && s != "?" && s != ".") {
                 std::string u = s;
-                for (char& c : u) {
+                for (char &c : u) {
                     c = static_cast<char>(std::toupper(static_cast<unsigned char>(c)));
                 }
                 return u;
@@ -131,7 +131,7 @@ std::string ElementFromMmCifRow(const std::unordered_map<std::string, int>& col,
     return "C";
 }
 
-void ParseAtomSiteChunk(const std::string& chunk, std::vector<Atom>& rawAtoms) {
+void ParseAtomSiteChunk(const std::string &chunk, std::vector<Atom> &rawAtoms) {
     if (chunk.find("_atom_site.") == std::string::npos) {
         return;
     }
@@ -168,7 +168,7 @@ void ParseAtomSiteChunk(const std::string& chunk, std::vector<Atom>& rawAtoms) {
             col[colnames[i]] = static_cast<int>(i);
         }
 
-        const auto need = [&](const char* name) -> int {
+        const auto need = [&](const char *name) -> int {
             const auto it = col.find(name);
             return it == col.end() ? -1 : it->second;
         };
@@ -231,9 +231,9 @@ void ParseAtomSiteChunk(const std::string& chunk, std::vector<Atom>& rawAtoms) {
     }
 }
 
-SSType StructConfTypeFromId(const std::string& confType) {
+SSType StructConfTypeFromId(const std::string &confType) {
     std::string u = Trim(confType);
-    for (char& c : u) {
+    for (char &c : u) {
         c = static_cast<char>(std::toupper(static_cast<unsigned char>(c)));
     }
     if (u.find("HELX") != std::string::npos || u.find("HELIX") != std::string::npos) {
@@ -246,7 +246,7 @@ SSType StructConfTypeFromId(const std::string& confType) {
     return SSType::Coil;
 }
 
-void ParseStructConfChunk(const std::string& chunk, std::vector<SecondaryStructureRange>& ranges) {
+void ParseStructConfChunk(const std::string &chunk, std::vector<SecondaryStructureRange> &ranges) {
     if (chunk.find("_struct_conf.") == std::string::npos) {
         return;
     }
@@ -283,7 +283,7 @@ void ParseStructConfChunk(const std::string& chunk, std::vector<SecondaryStructu
             col[colnames[i]] = static_cast<int>(i);
         }
 
-        const auto need = [&](const char* name) -> int {
+        const auto need = [&](const char *name) -> int {
             const auto it = col.find(name);
             return it == col.end() ? -1 : it->second;
         };
@@ -321,7 +321,7 @@ void ParseStructConfChunk(const std::string& chunk, std::vector<SecondaryStructu
 
 } // namespace
 
-Protein MmCifParser::ParseFile(const std::string& filepath) {
+Protein MmCifParser::ParseFile(const std::string &filepath) {
     Protein protein;
     protein.SetName(filepath);
 

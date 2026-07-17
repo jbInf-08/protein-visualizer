@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 
 class Camera {
-public:
+  public:
     Camera();
 
     glm::mat4 GetViewMatrix() const;
@@ -11,16 +11,16 @@ public:
 
     glm::vec3 GetEyePosition() const;
 
-    void SetTarget(const glm::vec3& target);
+    void SetTarget(const glm::vec3 &target);
     void SetDistance(float distance);
-    void FitSphere(const glm::vec3& center, float radius);
+    void FitSphere(const glm::vec3 &center, float radius);
 
     void ProcessMouseMove(float xpos, float ypos, bool leftButtonDown);
     void ProcessScroll(float yoffset);
 
     void SetViewportSize(int width, int height);
 
-private:
+  private:
     void ClampPitch();
 
     glm::vec3 m_Target{0.0f};

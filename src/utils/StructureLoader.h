@@ -6,6 +6,6 @@
 
 /// Dispatches by file extension to PDB or mmCIF parsers.
 class StructureLoader {
-public:
-    static Protein Load(const std::string& filepath);
+  public:
+    static Protein Load(const std::string &filepath);
 };

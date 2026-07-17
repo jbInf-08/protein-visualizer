@@ -2,30 +2,30 @@
 
 struct GLFWwindow;
 
-#include "Window.h"
 #include "../model/Protein.h"
 #include "../renderer/Camera.h"
 #include "../renderer/Renderer.h"
+#include "Window.h"
 
 #include <array>
 #include <optional>
 #include <string>
 
 class Application {
-public:
+  public:
     Application();
     void Run();
 
-private:
+  private:
     void RenderPanel();
     void UpdateCameraFromInput();
     void UpdateHoverPick();
-    void TryLoadPdb(const std::string& path);
+    void TryLoadPdb(const std::string &path);
     void ResetCameraToMolecule();
     void OnFramebufferResize(int width, int height);
 
-    static void GlfwFramebuffer(GLFWwindow* window, int width, int height);
-    static void GlfwDrop(GLFWwindow* window, int count, const char** paths);
+    static void GlfwFramebuffer(GLFWwindow *window, int width, int height);
+    static void GlfwDrop(GLFWwindow *window, int count, const char **paths);
 
     Window m_Window;
     Camera m_Camera;

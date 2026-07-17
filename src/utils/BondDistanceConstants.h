@@ -10,4 +10,4 @@ constexpr float kSulfurPairCapAngstrom = 2.15f;
 constexpr float kMetalPairFloorAngstrom = 2.35f;
 constexpr float kMetalPairCapAngstrom = 3.35f;
 constexpr float kNonMetalCapAngstrom = 2.88f;
-}  // namespace BondDistanceConstants
+} // namespace BondDistanceConstants

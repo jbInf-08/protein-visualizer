@@ -7,9 +7,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <cstdint>
 #include <cctype>
 #include <cmath>
+#include <cstdint>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -19,7 +19,7 @@
 
 namespace {
 
-std::string ReadFile(const std::string& path) {
+std::string ReadFile(const std::string &path) {
     std::ifstream f(path, std::ios::binary);
     if (!f) {
         throw std::runtime_error("Failed to read file: " + path);
@@ -29,7 +29,7 @@ std::string ReadFile(const std::string& path) {
     return ss.str();
 }
 
-GLuint CompileShader(GLenum type, const char* src) {
+GLuint CompileShader(GLenum type, const char *src) {
     const GLuint shader = glCreateShader(type);
     glShaderSource(shader, 1, &src, nullptr);
     glCompileShader(shader);
@@ -70,7 +70,7 @@ GLuint LinkProgram(GLuint vs, GLuint fs) {
     return program;
 }
 
-GLuint CreateProgramFromFiles(const std::string& vertPath, const std::string& fragPath) {
+GLuint CreateProgramFromFiles(const std::string &vertPath, const std::string &fragPath) {
     const std::string vsrc = ReadFile(vertPath);
     const std::string fsrc = ReadFile(fragPath);
     const GLuint vs = CompileShader(GL_VERTEX_SHADER, vsrc.c_str());
@@ -78,7 +78,8 @@ GLuint CreateProgramFromFiles(const std::string& vertPath, const std::string& fr
     return LinkProgram(vs, fs);
 }
 
-void BuildUvUnitSphere(int stacks, int slices, std::vector<float>& interleaved, std::vector<unsigned int>& indices) {
+void BuildUvUnitSphere(int stacks, int slices, std::vector<float> &interleaved,
+                       std::vector<unsigned int> &indices) {
     interleaved.clear();
     indices.clear();
 
@@ -122,7 +123,7 @@ void BuildUvUnitSphere(int stacks, int slices, std::vector<float>& interleaved, 
     }
 }
 
-char ElementKey(const std::string& elem) {
+char ElementKey(const std::string &elem) {
     if (elem.empty()) {
         return 'X';
     }
@@ -131,36 +132,36 @@ char ElementKey(const std::string& elem) {
 
 glm::vec3 SsColor(SSType ss) {
     switch (ss) {
-        case SSType::Helix:
-            return glm::vec3(0.32f, 0.55f, 1.0f);
-        case SSType::Strand:
-            return glm::vec3(1.0f, 0.82f, 0.22f);
-        default:
-            return glm::vec3(0.58f, 0.58f, 0.62f);
+    case SSType::Helix:
+        return glm::vec3(0.32f, 0.55f, 1.0f);
+    case SSType::Strand:
+        return glm::vec3(1.0f, 0.82f, 0.22f);
+    default:
+        return glm::vec3(0.58f, 0.58f, 0.62f);
     }
 }
 
-glm::vec3 ElementColor(const std::string& elem) {
+glm::vec3 ElementColor(const std::string &elem) {
     switch (ElementKey(elem)) {
-        case 'H':
-            return glm::vec3(0.95f, 0.95f, 1.0f);
-        case 'C':
-            return glm::vec3(0.565f, 0.565f, 0.565f);
-        case 'N':
-            return glm::vec3(0.188f, 0.314f, 0.972f);
-        case 'O':
-            return glm::vec3(1.0f, 0.051f, 0.051f);
-        case 'S':
-            return glm::vec3(0.98f, 0.98f, 0.2f);
-        case 'P':
-            return glm::vec3(1.0f, 0.502f, 0.0f);
-        default:
-            return glm::vec3(0.9f, 0.4f, 0.9f);
+    case 'H':
+        return glm::vec3(0.95f, 0.95f, 1.0f);
+    case 'C':
+        return glm::vec3(0.565f, 0.565f, 0.565f);
+    case 'N':
+        return glm::vec3(0.188f, 0.314f, 0.972f);
+    case 'O':
+        return glm::vec3(1.0f, 0.051f, 0.051f);
+    case 'S':
+        return glm::vec3(0.98f, 0.98f, 0.2f);
+    case 'P':
+        return glm::vec3(1.0f, 0.502f, 0.0f);
+    default:
+        return glm::vec3(0.9f, 0.4f, 0.9f);
     }
 }
 
 /// Open unit cylinder along +Y from y=0 to y=1, radius 1 in XZ; interleaved position(3)+normal(3).
-void BuildUnitOpenCylinder(int slices, std::vector<float>& interleaved, std::vector<unsigned int>& indices) {
+void BuildUnitOpenCylinder(int slices, std::vector<float> &interleaved, std::vector<unsigned int> &indices) {
     interleaved.clear();
     indices.clear();
     const float twoPi = 2.0f * 3.14159265358979323846f;
@@ -196,7 +197,7 @@ void BuildUnitOpenCylinder(int slices, std::vector<float>& interleaved, std::vec
     }
 }
 
-void AppendMat4Color(std::vector<float>& out, const glm::mat4& m, const glm::vec4& color) {
+void AppendMat4Color(std::vector<float> &out, const glm::mat4 &m, const glm::vec4 &color) {
     for (int c = 0; c < 4; ++c) {
         out.push_back(m[c].x);
         out.push_back(m[c].y);
@@ -209,7 +210,8 @@ void AppendMat4Color(std::vector<float>& out, const glm::mat4& m, const glm::vec
     out.push_back(color.w);
 }
 
-glm::vec3 CatmullRom(const glm::vec3& p0, const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, float t) {
+glm::vec3 CatmullRom(const glm::vec3 &p0, const glm::vec3 &p1, const glm::vec3 &p2, const glm::vec3 &p3,
+                     float t) {
     const float t2 = t * t;
     const float t3 = t2 * t;
     return 0.5f * ((2.0f * p1) + (-p0 + p2) * t + (2.0f * p0 - 5.0f * p1 + 4.0f * p2 - p3) * t2 +
@@ -222,14 +224,14 @@ struct TubeSegmentSample {
     SSType ss = SSType::Coil;
 };
 
-std::vector<TubeSegmentSample> BuildSmoothedTubeSegments(const Protein& protein) {
+std::vector<TubeSegmentSample> BuildSmoothedTubeSegments(const Protein &protein) {
     std::vector<TubeSegmentSample> out;
     if (!protein.HasCaTubeSegments()) {
         return out;
     }
-    const auto& atoms = protein.GetAtoms();
-    const auto& segs = protein.GetCaTubeSegments();
-    const auto& segSs = protein.GetCaTubeSegmentSs();
+    const auto &atoms = protein.GetAtoms();
+    const auto &segs = protein.GetCaTubeSegments();
+    const auto &segSs = protein.GetCaTubeSegmentSs();
 
     std::vector<int> trace;
     auto flushTrace = [&]() {
@@ -266,7 +268,7 @@ std::vector<TubeSegmentSample> BuildSmoothedTubeSegments(const Protein& protein)
         trace.clear();
     };
 
-    for (const auto& e : segs) {
+    for (const auto &e : segs) {
         if (trace.empty()) {
             trace.push_back(e.first);
             trace.push_back(e.second);
@@ -337,23 +339,26 @@ void Renderer::CreateGeometryBuffers(int sphereStacks, int sphereSlices, int cyl
     glBindVertexArray(m_Vao);
 
     glBindBuffer(GL_ARRAY_BUFFER, m_MeshVbo);
-    glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(mesh.size() * sizeof(float)), mesh.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(mesh.size() * sizeof(float)), mesh.data(),
+                 GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(0));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void *>(0));
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
+                          reinterpret_cast<void *>(3 * sizeof(float)));
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizeiptr>(idx.size() * sizeof(unsigned int)), idx.data(),
-                  GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizeiptr>(idx.size() * sizeof(unsigned int)),
+                 idx.data(), GL_STATIC_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, m_InstanceVbo);
     glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_DYNAMIC_DRAW);
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 8, reinterpret_cast<void*>(0));
+    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 8, reinterpret_cast<void *>(0));
     glVertexAttribDivisor(2, 1);
     glEnableVertexAttribArray(3);
-    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 8, reinterpret_cast<void*>(sizeof(float) * 4));
+    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 8,
+                          reinterpret_cast<void *>(sizeof(float) * 4));
     glVertexAttribDivisor(3, 1);
 
     glBindVertexArray(0);
@@ -377,13 +382,14 @@ void Renderer::CreateGeometryBuffers(int sphereStacks, int sphereSlices, int cyl
     glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(cylMesh.size() * sizeof(float)), cylMesh.data(),
                  GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(0));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void *>(0));
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
+                          reinterpret_cast<void *>(3 * sizeof(float)));
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_CylEbo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizeiptr>(cylIdx.size() * sizeof(unsigned int)), cylIdx.data(),
-                 GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizeiptr>(cylIdx.size() * sizeof(unsigned int)),
+                 cylIdx.data(), GL_STATIC_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, m_CylInstanceVbo);
     glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_DYNAMIC_DRAW);
@@ -392,12 +398,12 @@ void Renderer::CreateGeometryBuffers(int sphereStacks, int sphereSlices, int cyl
         const GLuint loc = 2 + c;
         glEnableVertexAttribArray(loc);
         glVertexAttribPointer(loc, 4, GL_FLOAT, GL_FALSE, stride,
-                              reinterpret_cast<void*>(static_cast<uintptr_t>(sizeof(float) * 4 * c)));
+                              reinterpret_cast<void *>(static_cast<uintptr_t>(sizeof(float) * 4 * c)));
         glVertexAttribDivisor(loc, 1);
     }
     glEnableVertexAttribArray(6);
     glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, stride,
-                          reinterpret_cast<void*>(static_cast<uintptr_t>(sizeof(float) * 16)));
+                          reinterpret_cast<void *>(static_cast<uintptr_t>(sizeof(float) * 16)));
     glVertexAttribDivisor(6, 1);
 
     glBindVertexArray(0);
@@ -406,14 +412,15 @@ void Renderer::CreateGeometryBuffers(int sphereStacks, int sphereSlices, int cyl
 Renderer::Renderer() {
     try {
         m_Program = CreateProgramFromFiles("shaders/sphere_instanced.vert", "shaders/sphere_instanced.frag");
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         std::cerr << e.what() << "\n";
         m_Program = 0;
     }
 
     try {
-        m_CylProgram = CreateProgramFromFiles("shaders/cylinder_instanced.vert", "shaders/cylinder_instanced.frag");
-    } catch (const std::exception& e) {
+        m_CylProgram =
+            CreateProgramFromFiles("shaders/cylinder_instanced.vert", "shaders/cylinder_instanced.frag");
+    } catch (const std::exception &e) {
         std::cerr << e.what() << "\n";
         m_CylProgram = 0;
     }
@@ -443,7 +450,7 @@ void Renderer::SetVisualizationMode(VisualizationMode mode) {
     m_CylinderInstancesDirty = true;
 }
 
-void Renderer::SetProtein(const Protein* protein) {
+void Renderer::SetProtein(const Protein *protein) {
     m_Protein = protein;
     m_InstancesDirty = true;
     m_CylinderInstancesDirty = true;
@@ -483,13 +490,13 @@ void Renderer::SetProtein(const Protein* protein) {
 float Renderer::RadiusScaleForMode(VisualizationMode mode, float vdwRadius) {
     (void)vdwRadius;
     switch (mode) {
-        case VisualizationMode::SpaceFilling:
-            return 1.0f;
-        case VisualizationMode::BallAndStick:
-        case VisualizationMode::Ribbon:
-        case VisualizationMode::Cartoon:
-        default:
-            return 0.32f;
+    case VisualizationMode::SpaceFilling:
+        return 1.0f;
+    case VisualizationMode::BallAndStick:
+    case VisualizationMode::Ribbon:
+    case VisualizationMode::Cartoon:
+    default:
+        return 0.32f;
     }
 }
 
@@ -506,10 +513,10 @@ void Renderer::RebuildInstanceBuffer() {
         return;
     }
 
-    const auto& atoms = m_Protein->GetAtoms();
+    const auto &atoms = m_Protein->GetAtoms();
     std::vector<float> instanceData;
     instanceData.reserve(atoms.size() * 8);
-    for (const Atom& a : atoms) {
+    for (const Atom &a : atoms) {
         const float scale = RadiusScaleForMode(m_CurrentMode, a.radius);
         const float r = std::max(0.05f, a.radius * scale);
         const glm::vec3 c = ElementColor(a.element);
@@ -524,8 +531,8 @@ void Renderer::RebuildInstanceBuffer() {
     }
 
     glBindBuffer(GL_ARRAY_BUFFER, m_InstanceVbo);
-    glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(instanceData.size() * sizeof(float)), instanceData.data(),
-                 GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(instanceData.size() * sizeof(float)),
+                 instanceData.data(), GL_DYNAMIC_DRAW);
 }
 
 void Renderer::RebuildCylinderInstanceBuffer() {
@@ -540,24 +547,25 @@ void Renderer::RebuildCylinderInstanceBuffer() {
         return;
     }
 
-    const auto& atoms = m_Protein->GetAtoms();
+    const auto &atoms = m_Protein->GetAtoms();
     std::vector<float> instanceData;
 
     if (m_CurrentMode == VisualizationMode::BallAndStick && m_Protein->HasBonds()) {
-        const auto& bonds = m_Protein->GetBonds();
+        const auto &bonds = m_Protein->GetBonds();
         instanceData.reserve(bonds.size() * 20);
 
         constexpr float kBallScale = 0.32f;
         constexpr float kStickRadius = 0.18f;
 
-        for (const auto& e : bonds) {
+        for (const auto &e : bonds) {
             const int ia = e.first;
             const int ib = e.second;
-            if (ia < 0 || ib < 0 || ia >= static_cast<int>(atoms.size()) || ib >= static_cast<int>(atoms.size())) {
+            if (ia < 0 || ib < 0 || ia >= static_cast<int>(atoms.size()) ||
+                ib >= static_cast<int>(atoms.size())) {
                 continue;
             }
-            const Atom& A = atoms[static_cast<size_t>(ia)];
-            const Atom& B = atoms[static_cast<size_t>(ib)];
+            const Atom &A = atoms[static_cast<size_t>(ia)];
+            const Atom &B = atoms[static_cast<size_t>(ib)];
             const glm::vec3 delta = B.position - A.position;
             const float fullLen = glm::length(delta);
             if (fullLen < 1.0e-4f) {
@@ -585,7 +593,7 @@ void Renderer::RebuildCylinderInstanceBuffer() {
             R[3] = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
             const glm::mat4 M = glm::translate(glm::mat4(1.0f), base) * R *
-                                 glm::scale(glm::mat4(1.0f), glm::vec3(kStickRadius, cylLen, kStickRadius));
+                                glm::scale(glm::mat4(1.0f), glm::vec3(kStickRadius, cylLen, kStickRadius));
 
             const glm::vec3 ca = ElementColor(A.element);
             const glm::vec3 cb = ElementColor(B.element);
@@ -598,7 +606,7 @@ void Renderer::RebuildCylinderInstanceBuffer() {
         instanceData.reserve(smoothSegs.size() * 20);
         const float tubeRadius = (m_CurrentMode == VisualizationMode::Cartoon) ? 0.36f : 0.30f;
 
-        for (const TubeSegmentSample& seg : smoothSegs) {
+        for (const TubeSegmentSample &seg : smoothSegs) {
             const glm::vec3 delta = seg.b - seg.a;
             const float fullLen = glm::length(delta);
             if (fullLen < 1.0e-4f) {
@@ -634,8 +642,8 @@ void Renderer::RebuildCylinderInstanceBuffer() {
                 }
             }
 
-            const glm::mat4 M =
-                glm::translate(glm::mat4(1.0f), base) * R * glm::scale(glm::mat4(1.0f), glm::vec3(sx, sy, sz));
+            const glm::mat4 M = glm::translate(glm::mat4(1.0f), base) * R *
+                                glm::scale(glm::mat4(1.0f), glm::vec3(sx, sy, sz));
 
             const glm::vec3 col = SsColor(ss);
             AppendMat4Color(instanceData, M, glm::vec4(col, 1.0f));
@@ -643,8 +651,8 @@ void Renderer::RebuildCylinderInstanceBuffer() {
     }
 
     glBindBuffer(GL_ARRAY_BUFFER, m_CylInstanceVbo);
-    glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(instanceData.size() * sizeof(float)), instanceData.data(),
-                 GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(instanceData.size() * sizeof(float)),
+                 instanceData.data(), GL_DYNAMIC_DRAW);
     m_CylinderInstanceCount = static_cast<int>(instanceData.size() / 20);
 }
 
@@ -662,7 +670,8 @@ void Renderer::EnsureGpuReady() {
     }
 }
 
-void Renderer::Draw(int viewportWidth, int viewportHeight, const glm::mat4& view, const glm::mat4& projection) {
+void Renderer::Draw(int viewportWidth, int viewportHeight, const glm::mat4 &view,
+                    const glm::mat4 &projection) {
     (void)viewportWidth;
     (void)viewportHeight;
     if (m_Program == 0 || m_Vao == 0) {

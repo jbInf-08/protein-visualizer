@@ -7,7 +7,7 @@
 
 Camera::Camera() = default;
 
-glm::vec3 OrbitPosition(const glm::vec3& target, float distance, float yawDeg, float pitchDeg) {
+glm::vec3 OrbitPosition(const glm::vec3 &target, float distance, float yawDeg, float pitchDeg) {
     const float yaw = glm::radians(yawDeg);
     const float pitch = glm::radians(pitchDeg);
     const float x = distance * std::cos(pitch) * std::cos(yaw);
@@ -16,9 +16,7 @@ glm::vec3 OrbitPosition(const glm::vec3& target, float distance, float yawDeg, f
     return target + glm::vec3(x, y, z);
 }
 
-glm::vec3 Camera::GetEyePosition() const {
-    return OrbitPosition(m_Target, m_Distance, m_Yaw, m_Pitch);
-}
+glm::vec3 Camera::GetEyePosition() const { return OrbitPosition(m_Target, m_Distance, m_Yaw, m_Pitch); }
 
 glm::mat4 Camera::GetViewMatrix() const {
     const glm::vec3 eye = GetEyePosition();
@@ -29,22 +27,18 @@ glm::mat4 Camera::GetProjectionMatrix(float aspect) const {
     return glm::perspective(glm::radians(m_FovDegrees), aspect, m_Near, m_Far);
 }
 
-void Camera::SetTarget(const glm::vec3& target) {
-    m_Target = target;
-}
+void Camera::SetTarget(const glm::vec3 &target) { m_Target = target; }
 
-void Camera::SetDistance(float distance) {
-    m_Distance = std::max(0.5f, distance);
-}
+void Camera::SetDistance(float distance) { m_Distance = std::max(0.5f, distance); }
 
-void Camera::FitSphere(const glm::vec3& center, float radius) {
+void Camera::FitSphere(const glm::vec3 &center, float radius) {
     m_Target = center;
     if (radius <= 1e-4f) {
         m_Distance = 10.0f;
         return;
     }
-    const float aspect = static_cast<float>(std::max(1, m_ViewportWidth)) /
-                         static_cast<float>(std::max(1, m_ViewportHeight));
+    const float aspect =
+        static_cast<float>(std::max(1, m_ViewportWidth)) / static_cast<float>(std::max(1, m_ViewportHeight));
     const float fov = glm::radians(m_FovDegrees);
     const float fit = radius / std::sin(fov * 0.5f);
     m_Distance = std::max(2.0f, fit * 1.35f);
@@ -83,6 +77,4 @@ void Camera::SetViewportSize(int width, int height) {
     m_ViewportHeight = std::max(1, height);
 }
 
-void Camera::ClampPitch() {
-    m_Pitch = std::clamp(m_Pitch, -89.0f, 89.0f);
-}
+void Camera::ClampPitch() { m_Pitch = std::clamp(m_Pitch, -89.0f, 89.0f); }

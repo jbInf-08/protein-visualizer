@@ -2,10 +2,12 @@
 
 #define GLFW_INCLUDE_NONE
 #include <glad/glad.h>
+
+// Separate block: keeps clang-format's SortIncludes from hoisting GLFW above
+// glad, which is only safe today because GLFW_INCLUDE_NONE is set above.
 #include <GLFW/glfw3.h>
 
-Window::Window(const char* title, int width, int height)
-    : m_Title(title), m_Width(width), m_Height(height) {
+Window::Window(const char *title, int width, int height) : m_Title(title), m_Width(width), m_Height(height) {
     if (!glfwInit()) {
         return;
     }
@@ -49,9 +51,7 @@ void Window::Update() {
     glfwSwapBuffers(m_Window);
 }
 
-bool Window::ShouldClose() const {
-    return m_Window ? glfwWindowShouldClose(m_Window) != 0 : true;
-}
+bool Window::ShouldClose() const { return m_Window ? glfwWindowShouldClose(m_Window) != 0 : true; }
 
 void Window::NotifyFramebufferResize(int width, int height) {
     m_Width = width;

@@ -2,8 +2,8 @@
 
 #include "Screenshot.h"
 
-#include "../utils/Picking.h"
 #include "../utils/PDBParser.h"
+#include "../utils/Picking.h"
 #include "../utils/StructureLoader.h"
 
 #include <glad/glad.h>
@@ -23,20 +23,19 @@
 #include <iostream>
 
 namespace {
-Application* g_App = nullptr;
+Application *g_App = nullptr;
 }
 
-Application::Application()
-    : m_Window("Protein Visualizer", 1280, 720) {
-    const char* def = "resources/1CRN.pdb";
+Application::Application() : m_Window("Protein Visualizer", 1280, 720) {
+    const char *def = "resources/1CRN.pdb";
     std::strncpy(m_PdbPathBuffer.data(), def, m_PdbPathBuffer.size() - 1);
     m_PdbPathBuffer[m_PdbPathBuffer.size() - 1] = '\0';
-    const char* shot = "screenshot.png";
+    const char *shot = "screenshot.png";
     std::strncpy(m_ScreenshotPathBuffer.data(), shot, m_ScreenshotPathBuffer.size() - 1);
     m_ScreenshotPathBuffer[m_ScreenshotPathBuffer.size() - 1] = '\0';
 }
 
-void Application::TryLoadPdb(const std::string& path) {
+void Application::TryLoadPdb(const std::string &path) {
     m_LastLoadMessage.clear();
     if (!path.empty()) {
         std::strncpy(m_PdbPathBuffer.data(), path.c_str(), m_PdbPathBuffer.size() - 1);
@@ -64,8 +63,9 @@ void Application::TryLoadPdb(const std::string& path) {
         m_Camera.FitSphere(center, std::max(radius, 0.5f));
         m_LastLoadMessage = "Loaded " + std::to_string(m_Protein->GetAtoms().size()) + " atoms, " +
                             std::to_string(m_Protein->GetBonds().size()) + " bonds, " +
-                            std::to_string(m_Protein->GetCaTubeSegments().size()) + " Cα segments from " + path;
-    } catch (const std::exception& e) {
+                            std::to_string(m_Protein->GetCaTubeSegments().size()) + " Cα segments from " +
+                            path;
+    } catch (const std::exception &e) {
         m_HasSuccessfulLoad = false;
         m_Protein.reset();
         m_Renderer.SetProtein(nullptr);
@@ -89,7 +89,7 @@ void Application::OnFramebufferResize(int width, int height) {
     m_Camera.SetViewportSize(width, height);
 }
 
-void Application::GlfwFramebuffer(GLFWwindow* window, int width, int height) {
+void Application::GlfwFramebuffer(GLFWwindow *window, int width, int height) {
     (void)window;
     // ImGui 1.91+ refreshes io.DisplaySize each ImGui_ImplGlfw_NewFrame(); no exported framebuffer callback.
     if (g_App) {
@@ -97,7 +97,7 @@ void Application::GlfwFramebuffer(GLFWwindow* window, int width, int height) {
     }
 }
 
-void Application::GlfwDrop(GLFWwindow*, int count, const char** paths) {
+void Application::GlfwDrop(GLFWwindow *, int count, const char **paths) {
     if (!g_App || count <= 0 || !paths || !paths[0]) {
         return;
     }
@@ -105,12 +105,12 @@ void Application::GlfwDrop(GLFWwindow*, int count, const char** paths) {
 }
 
 void Application::UpdateHoverPick() {
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
     if (!m_Protein || !m_Protein->HasAtoms() || io.WantCaptureMouse) {
         m_HoverAtomIndex.reset();
         return;
     }
-    GLFWwindow* win = m_Window.GetNativeWindow();
+    GLFWwindow *win = m_Window.GetNativeWindow();
     if (!win) {
         m_HoverAtomIndex.reset();
         return;
@@ -141,8 +141,8 @@ void Application::UpdateHoverPick() {
 }
 
 void Application::UpdateCameraFromInput() {
-    ImGuiIO& io = ImGui::GetIO();
-    GLFWwindow* win = m_Window.GetNativeWindow();
+    ImGuiIO &io = ImGui::GetIO();
+    GLFWwindow *win = m_Window.GetNativeWindow();
     if (!win) {
         return;
     }
@@ -173,7 +173,8 @@ void Application::RenderPanel() {
     ImGui::Separator();
 
     int modeIndex = static_cast<int>(m_Renderer.GetVisualizationMode());
-    const char* modeNames[] = {"Ball and stick", "Space filling", "Ribbon (Cα, SS colors)", "Cartoon (helix / strand)"};
+    const char *modeNames[] = {"Ball and stick", "Space filling", "Ribbon (Cα, SS colors)",
+                               "Cartoon (helix / strand)"};
     if (ImGui::Combo("Visualization", &modeIndex, modeNames, IM_ARRAYSIZE(modeNames))) {
         m_Renderer.SetVisualizationMode(static_cast<VisualizationMode>(modeIndex));
     }
@@ -181,12 +182,14 @@ void Application::RenderPanel() {
         PDBParser::SetStrictDsspMode(m_StrictDsspMode);
     }
     if (m_HasSuccessfulLoad) {
-        ImGui::Text("Current loaded SS mode: %s", m_LastLoadedStrictDsspMode ? "Strict DSSP" : "Legacy DSSP-like");
+        ImGui::Text("Current loaded SS mode: %s",
+                    m_LastLoadedStrictDsspMode ? "Strict DSSP" : "Legacy DSSP-like");
         if (m_LastLoadedStrictDsspMode != m_StrictDsspMode) {
             ImGui::TextUnformatted("Mode changed. Reload to apply.");
         }
     } else {
-        ImGui::Text("Current loaded SS mode: %s", m_StrictDsspMode ? "Strict DSSP (pending load)" : "Legacy DSSP-like (pending load)");
+        ImGui::Text("Current loaded SS mode: %s",
+                    m_StrictDsspMode ? "Strict DSSP (pending load)" : "Legacy DSSP-like (pending load)");
     }
 
     ImGui::Separator();
@@ -197,12 +200,12 @@ void Application::RenderPanel() {
 
     if (m_Protein && m_Protein->HasAtoms() && m_HoverAtomIndex.has_value()) {
         const int i = *m_HoverAtomIndex;
-        const auto& atoms = m_Protein->GetAtoms();
+        const auto &atoms = m_Protein->GetAtoms();
         if (i >= 0 && i < static_cast<int>(atoms.size())) {
-            const Atom& a = atoms[static_cast<size_t>(i)];
+            const Atom &a = atoms[static_cast<size_t>(i)];
             ImGui::Separator();
-            ImGui::Text("Hover: %s %s %d (%s) serial %d", a.atomName.c_str(), a.residueName.c_str(), a.residueSeq,
-                        a.element.c_str(), a.serial);
+            ImGui::Text("Hover: %s %s %d (%s) serial %d", a.atomName.c_str(), a.residueName.c_str(),
+                        a.residueSeq, a.element.c_str(), a.serial);
         }
     }
 
@@ -222,7 +225,7 @@ void Application::Run() {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGui::StyleColorsDark();
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
     ImGui_ImplGlfw_InitForOpenGL(m_Window.GetNativeWindow(), true);
@@ -251,7 +254,7 @@ void Application::Run() {
         glClearColor(m_ClearColorRgb[0], m_ClearColorRgb[1], m_ClearColorRgb[2], 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        GLFWwindow* wnd = m_Window.GetNativeWindow();
+        GLFWwindow *wnd = m_Window.GetNativeWindow();
         int fbw = 0;
         int fbh = 0;
         if (wnd) {

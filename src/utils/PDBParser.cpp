@@ -8,11 +8,11 @@
 #include <algorithm>
 #include <cctype>
 #include <cmath>
+#include <cstdint>
 #include <fstream>
 #include <map>
 #include <set>
 #include <stdexcept>
-#include <cstdint>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -33,7 +33,7 @@ std::string TrimToken(std::string s) {
     return s;
 }
 
-int ParseIntField(const std::string& line, size_t start, size_t len) {
+int ParseIntField(const std::string &line, size_t start, size_t len) {
     if (start + len > line.size()) {
         return 0;
     }
@@ -48,35 +48,35 @@ int ParseIntField(const std::string& line, size_t start, size_t len) {
     }
 }
 
-float VdwRadiusForElement(const std::string& elem) {
+float VdwRadiusForElement(const std::string &elem) {
     if (elem.empty()) {
         return 1.5f;
     }
     const char e = static_cast<char>(std::toupper(static_cast<unsigned char>(elem[0])));
     switch (e) {
-        case 'H':
-            return 1.2f;
-        case 'C':
-            return 1.7f;
-        case 'N':
-            return 1.55f;
-        case 'O':
-            return 1.52f;
-        case 'S':
-            return 1.8f;
-        case 'P':
-            return 1.8f;
-        default:
-            return 1.5f;
+    case 'H':
+        return 1.2f;
+    case 'C':
+        return 1.7f;
+    case 'N':
+        return 1.55f;
+    case 'O':
+        return 1.52f;
+    case 'S':
+        return 1.8f;
+    case 'P':
+        return 1.8f;
+    default:
+        return 1.5f;
     }
 }
 
-float CovalentRadiusAngstrom(const std::string& elem) {
+float CovalentRadiusAngstrom(const std::string &elem) {
     if (elem.empty()) {
         return 0.8f;
     }
     std::string u = TrimToken(elem);
-    for (char& c : u) {
+    for (char &c : u) {
         c = static_cast<char>(std::toupper(static_cast<unsigned char>(c)));
     }
     if (u.size() >= 2) {
@@ -140,42 +140,42 @@ float CovalentRadiusAngstrom(const std::string& elem) {
     }
     const char e = u[0];
     switch (e) {
-        case 'H':
-            return 0.31f;
-        case 'C':
-            return 0.76f;
-        case 'N':
-            return 0.71f;
-        case 'O':
-            return 0.66f;
-        case 'S':
-            return 1.05f;
-        case 'P':
-            return 1.07f;
-        case 'F':
-            return 0.57f;
-        default:
-            return 0.8f;
+    case 'H':
+        return 0.31f;
+    case 'C':
+        return 0.76f;
+    case 'N':
+        return 0.71f;
+    case 'O':
+        return 0.66f;
+    case 'S':
+        return 1.05f;
+    case 'P':
+        return 1.07f;
+    case 'F':
+        return 0.57f;
+    default:
+        return 0.8f;
     }
 }
 
-char ElementKeyChar(const std::string& elem) {
+char ElementKeyChar(const std::string &elem) {
     if (elem.empty()) {
         return 'X';
     }
     return static_cast<char>(std::toupper(static_cast<unsigned char>(elem[0])));
 }
 
-bool IsMetalElement(const std::string& elem) {
+bool IsMetalElement(const std::string &elem) {
     std::string u = TrimToken(elem);
-    for (char& c : u) {
+    for (char &c : u) {
         c = static_cast<char>(std::toupper(static_cast<unsigned char>(c)));
     }
     if (u.size() >= 2) {
-        if (u == "FE" || u == "ZN" || u == "CU" || u == "MG" || u == "MN" || u == "MO" || u == "CO" || u == "NI" ||
-            u == "CD" || u == "HG" || u == "AU" || u == "NA" || u == "SR" || u == "BA" || u == "PB" || u == "LI" ||
-            u == "RB" || u == "CS" || u == "AL" || u == "CR" || u == "AG" || u == "PT" || u == "PD" || u == "IR" ||
-            u == "RU" || u == "TI" || u == "V" || u == "W") {
+        if (u == "FE" || u == "ZN" || u == "CU" || u == "MG" || u == "MN" || u == "MO" || u == "CO" ||
+            u == "NI" || u == "CD" || u == "HG" || u == "AU" || u == "NA" || u == "SR" || u == "BA" ||
+            u == "PB" || u == "LI" || u == "RB" || u == "CS" || u == "AL" || u == "CR" || u == "AG" ||
+            u == "PT" || u == "PD" || u == "IR" || u == "RU" || u == "TI" || u == "V" || u == "W") {
             return true;
         }
         if (u == "CA") {
@@ -188,7 +188,7 @@ bool IsMetalElement(const std::string& elem) {
     return false;
 }
 
-float MaxAllowedBondDistance(const Atom& a, const Atom& b) {
+float MaxAllowedBondDistance(const Atom &a, const Atom &b) {
     const float ci = CovalentRadiusAngstrom(a.element);
     const float cj = CovalentRadiusAngstrom(b.element);
     float cap = ci + cj + BondDistanceConstants::kCovalentPaddingAngstrom;
@@ -222,7 +222,7 @@ struct ResidueKey {
     int seq = 0;
     char icode = ' ';
 
-    bool operator<(const ResidueKey& o) const {
+    bool operator<(const ResidueKey &o) const {
         if (chain != o.chain) {
             return chain < o.chain;
         }
@@ -235,15 +235,15 @@ struct ResidueKey {
     }
 };
 
-std::string CanonicalAtomName(const std::string& raw) {
+std::string CanonicalAtomName(const std::string &raw) {
     std::string s = TrimToken(raw);
-    for (char& c : s) {
+    for (char &c : s) {
         c = static_cast<char>(std::toupper(static_cast<unsigned char>(c)));
     }
     return s;
 }
 
-void AddUndirectedEdge(std::set<std::pair<int, int>>& edges, int i, int j) {
+void AddUndirectedEdge(std::set<std::pair<int, int>> &edges, int i, int j) {
     if (i == j) {
         return;
     }
@@ -252,8 +252,8 @@ void AddUndirectedEdge(std::set<std::pair<int, int>>& edges, int i, int j) {
     edges.insert({a, b});
 }
 
-void MaybeBondByDistance(std::set<std::pair<int, int>>& edges, const Atom& A, int ia, const Atom& B, int ib, float dMin,
-                         float dMax) {
+void MaybeBondByDistance(std::set<std::pair<int, int>> &edges, const Atom &A, int ia, const Atom &B, int ib,
+                         float dMin, float dMax) {
     const float d = glm::length(A.position - B.position);
     if (d >= dMin && d <= dMax) {
         AddUndirectedEdge(edges, ia, ib);
@@ -261,10 +261,10 @@ void MaybeBondByDistance(std::set<std::pair<int, int>>& edges, const Atom& A, in
 }
 
 /// Standard peptide backbone bonds from ATOM records (N–CA, CA–C, C–N peptide).
-void AddExplicitPolymerBackboneBonds(const std::vector<Atom>& atoms, std::set<std::pair<int, int>>& edges) {
+void AddExplicitPolymerBackboneBonds(const std::vector<Atom> &atoms, std::set<std::pair<int, int>> &edges) {
     std::map<ResidueKey, std::unordered_map<std::string, int>> byResidue;
     for (int i = 0; i < static_cast<int>(atoms.size()); ++i) {
-        const Atom& a = atoms[static_cast<size_t>(i)];
+        const Atom &a = atoms[static_cast<size_t>(i)];
         if (a.hetero) {
             continue;
         }
@@ -275,18 +275,18 @@ void AddExplicitPolymerBackboneBonds(const std::vector<Atom>& atoms, std::set<st
         byResidue[k][CanonicalAtomName(a.atomName)] = i;
     }
 
-    for (auto& resEntry : byResidue) {
-        const auto& m = resEntry.second;
+    for (auto &resEntry : byResidue) {
+        const auto &m = resEntry.second;
         const auto itN = m.find("N");
         const auto itCA = m.find("CA");
         const auto itC = m.find("C");
         if (itN != m.end() && itCA != m.end()) {
-            MaybeBondByDistance(edges, atoms[static_cast<size_t>(itN->second)], itN->second, atoms[static_cast<size_t>(itCA->second)],
-                                itCA->second, 0.95f, 1.75f);
+            MaybeBondByDistance(edges, atoms[static_cast<size_t>(itN->second)], itN->second,
+                                atoms[static_cast<size_t>(itCA->second)], itCA->second, 0.95f, 1.75f);
         }
         if (itCA != m.end() && itC != m.end()) {
-            MaybeBondByDistance(edges, atoms[static_cast<size_t>(itCA->second)], itCA->second, atoms[static_cast<size_t>(itC->second)],
-                                itC->second, 1.15f, 1.85f);
+            MaybeBondByDistance(edges, atoms[static_cast<size_t>(itCA->second)], itCA->second,
+                                atoms[static_cast<size_t>(itC->second)], itC->second, 1.15f, 1.85f);
         }
     }
 
@@ -313,11 +313,11 @@ struct GridKey {
     int x = 0;
     int y = 0;
     int z = 0;
-    bool operator==(const GridKey& o) const { return x == o.x && y == o.y && z == o.z; }
+    bool operator==(const GridKey &o) const { return x == o.x && y == o.y && z == o.z; }
 };
 
 struct GridKeyHash {
-    std::size_t operator()(const GridKey& k) const noexcept {
+    std::size_t operator()(const GridKey &k) const noexcept {
         std::size_t h = 1469598103934665603ULL;
         auto mix = [&](int v) {
             h ^= static_cast<std::size_t>(static_cast<unsigned int>(v) + 0x9e3779b9u);
@@ -330,7 +330,7 @@ struct GridKeyHash {
     }
 };
 
-void InferBondsSpatialHash(const std::vector<Atom>& atoms, std::set<std::pair<int, int>>& edges) {
+void InferBondsSpatialHash(const std::vector<Atom> &atoms, std::set<std::pair<int, int>> &edges) {
     const int n = static_cast<int>(atoms.size());
     if (n < 2) {
         return;
@@ -341,7 +341,7 @@ void InferBondsSpatialHash(const std::vector<Atom>& atoms, std::set<std::pair<in
     std::unordered_map<GridKey, std::vector<int>, GridKeyHash> grid;
     grid.reserve(static_cast<size_t>(std::max(16, n / 2)));
 
-    auto cellOf = [&](const glm::vec3& p) -> GridKey {
+    auto cellOf = [&](const glm::vec3 &p) -> GridKey {
         return {static_cast<int>(std::floor(p.x / kCell)), static_cast<int>(std::floor(p.y / kCell)),
                 static_cast<int>(std::floor(p.z / kCell))};
     };
@@ -351,7 +351,7 @@ void InferBondsSpatialHash(const std::vector<Atom>& atoms, std::set<std::pair<in
     }
 
     for (int i = 0; i < n; ++i) {
-        const glm::vec3& pi = atoms[static_cast<size_t>(i)].position;
+        const glm::vec3 &pi = atoms[static_cast<size_t>(i)].position;
         const GridKey c0 = cellOf(pi);
         for (int dx = -1; dx <= 1; ++dx) {
             for (int dy = -1; dy <= 1; ++dy) {
@@ -365,8 +365,8 @@ void InferBondsSpatialHash(const std::vector<Atom>& atoms, std::set<std::pair<in
                         if (j <= i) {
                             continue;
                         }
-                        const Atom& A = atoms[static_cast<size_t>(i)];
-                        const Atom& B = atoms[static_cast<size_t>(j)];
+                        const Atom &A = atoms[static_cast<size_t>(i)];
+                        const Atom &B = atoms[static_cast<size_t>(j)];
                         const float d = glm::length(A.position - B.position);
                         if (d < kMinD) {
                             continue;
@@ -391,7 +391,7 @@ struct CaNode {
     glm::vec3 pos{0.0f};
 };
 
-bool CaNodeLess(const CaNode& a, const CaNode& b) {
+bool CaNodeLess(const CaNode &a, const CaNode &b) {
     if (a.chain != b.chain) {
         return a.chain < b.chain;
     }
@@ -414,7 +414,7 @@ struct AtomSiteKey {
     std::string resName;
     std::string atomName;
 
-    bool operator<(const AtomSiteKey& o) const {
+    bool operator<(const AtomSiteKey &o) const {
         if (hetero != o.hetero) {
             return hetero < o.hetero;
         }
@@ -436,7 +436,7 @@ struct AtomSiteKey {
     }
 };
 
-AtomSiteKey MakeSiteKey(const Atom& a) {
+AtomSiteKey MakeSiteKey(const Atom &a) {
     AtomSiteKey k;
     k.hetero = a.hetero;
     k.chain = (a.chainChar == '\0' || a.chainChar == ' ') ? ' ' : a.chainChar;
@@ -460,7 +460,7 @@ int AltLocRank(char c) {
     return 64;
 }
 
-void ApplyAltLocChoice(std::vector<Atom>& raw, Protein& protein) {
+void ApplyAltLocChoice(std::vector<Atom> &raw, Protein &protein) {
     std::map<AtomSiteKey, size_t> winner;
     for (size_t i = 0; i < raw.size(); ++i) {
         const AtomSiteKey k = MakeSiteKey(raw[i]);
@@ -476,7 +476,7 @@ void ApplyAltLocChoice(std::vector<Atom>& raw, Protein& protein) {
     }
     std::unordered_set<size_t> keep;
     keep.reserve(winner.size());
-    for (const auto& p : winner) {
+    for (const auto &p : winner) {
         keep.insert(p.second);
     }
     std::vector<Atom> out;
@@ -489,7 +489,7 @@ void ApplyAltLocChoice(std::vector<Atom>& raw, Protein& protein) {
     protein.SetAtoms(std::move(out));
 }
 
-SSType SsFromAtomTable(const std::vector<std::uint8_t>& atomSs, int atomIndex) {
+SSType SsFromAtomTable(const std::vector<std::uint8_t> &atomSs, int atomIndex) {
     if (atomIndex < 0 || static_cast<size_t>(atomIndex) >= atomSs.size()) {
         return SSType::Coil;
     }
@@ -501,11 +501,12 @@ struct CaTubeBuild {
     std::vector<std::uint8_t> segSs;
 };
 
-CaTubeBuild BuildCaTubeSegmentsWithSs(const std::vector<Atom>& atoms, const std::vector<std::uint8_t>& atomSs) {
+CaTubeBuild BuildCaTubeSegmentsWithSs(const std::vector<Atom> &atoms,
+                                      const std::vector<std::uint8_t> &atomSs) {
     std::vector<CaNode> nodes;
     nodes.reserve(atoms.size() / 4);
     for (int i = 0; i < static_cast<int>(atoms.size()); ++i) {
-        const Atom& a = atoms[static_cast<size_t>(i)];
+        const Atom &a = atoms[static_cast<size_t>(i)];
         if (a.hetero) {
             continue;
         }
@@ -526,8 +527,8 @@ CaTubeBuild BuildCaTubeSegmentsWithSs(const std::vector<Atom>& atoms, const std:
     out.segs.reserve(nodes.size());
     out.segSs.reserve(nodes.size());
     for (size_t k = 0; k + 1 < nodes.size(); ++k) {
-        const CaNode& u = nodes[k];
-        const CaNode& v = nodes[k + 1];
+        const CaNode &u = nodes[k];
+        const CaNode &v = nodes[k + 1];
         if (u.chain != v.chain) {
             continue;
         }
@@ -540,13 +541,14 @@ CaTubeBuild BuildCaTubeSegmentsWithSs(const std::vector<Atom>& atoms, const std:
             continue;
         }
         out.segs.push_back({u.atomIndex, v.atomIndex});
-        const SSType merged = SsMerge(SsFromAtomTable(atomSs, u.atomIndex), SsFromAtomTable(atomSs, v.atomIndex));
+        const SSType merged =
+            SsMerge(SsFromAtomTable(atomSs, u.atomIndex), SsFromAtomTable(atomSs, v.atomIndex));
         out.segSs.push_back(static_cast<std::uint8_t>(merged));
     }
     return out;
 }
 
-bool TryParseHelixRange(const std::string& line, char& chainA, int& seqA, char& chainB, int& seqB) {
+bool TryParseHelixRange(const std::string &line, char &chainA, int &seqA, char &chainB, int &seqB) {
     if (line.size() < 36 || line.compare(0, 5, "HELIX") != 0) {
         return false;
     }
@@ -557,7 +559,7 @@ bool TryParseHelixRange(const std::string& line, char& chainA, int& seqA, char& 
     return seqA != 0 && seqB != 0;
 }
 
-bool TryParseSheetRange(const std::string& line, char& chainA, int& seqA, char& chainB, int& seqB) {
+bool TryParseSheetRange(const std::string &line, char &chainA, int &seqA, char &chainB, int &seqB) {
     if (line.size() < 37 || line.compare(0, 5, "SHEET") != 0) {
         return false;
     }
@@ -568,13 +570,13 @@ bool TryParseSheetRange(const std::string& line, char& chainA, int& seqA, char& 
     return seqA != 0 && seqB != 0;
 }
 
-void ApplySsRange(std::vector<std::uint8_t>& atomSs, const std::vector<Atom>& atoms, char chain, int seqLo, int seqHi,
-                  SSType assign) {
+void ApplySsRange(std::vector<std::uint8_t> &atomSs, const std::vector<Atom> &atoms, char chain, int seqLo,
+                  int seqHi, SSType assign) {
     if (seqLo > seqHi) {
         std::swap(seqLo, seqHi);
     }
     for (size_t i = 0; i < atoms.size(); ++i) {
-        const Atom& a = atoms[i];
+        const Atom &a = atoms[i];
         const char c = a.chainChar == '\0' ? ' ' : a.chainChar;
         if (c != chain) {
             continue;
@@ -596,7 +598,7 @@ struct ResidueBackbone {
     int o = -1;
 };
 
-bool ResidueBackboneLess(const ResidueBackbone& a, const ResidueBackbone& b) {
+bool ResidueBackboneLess(const ResidueBackbone &a, const ResidueBackbone &b) {
     if (a.chain != b.chain) {
         return a.chain < b.chain;
     }
@@ -608,10 +610,10 @@ bool ResidueBackboneLess(const ResidueBackbone& a, const ResidueBackbone& b) {
     return ua < ub;
 }
 
-std::vector<ResidueBackbone> BuildBackboneResidues(const std::vector<Atom>& atoms) {
+std::vector<ResidueBackbone> BuildBackboneResidues(const std::vector<Atom> &atoms) {
     std::map<ResidueKey, ResidueBackbone> byRes;
     for (int i = 0; i < static_cast<int>(atoms.size()); ++i) {
-        const Atom& a = atoms[static_cast<size_t>(i)];
+        const Atom &a = atoms[static_cast<size_t>(i)];
         if (a.hetero) {
             continue;
         }
@@ -619,7 +621,7 @@ std::vector<ResidueBackbone> BuildBackboneResidues(const std::vector<Atom>& atom
         rk.chain = a.chainChar == '\0' ? ' ' : a.chainChar;
         rk.seq = a.residueSeq;
         rk.icode = a.insertionCode == '\0' ? ' ' : a.insertionCode;
-        ResidueBackbone& bb = byRes[rk];
+        ResidueBackbone &bb = byRes[rk];
         bb.chain = rk.chain;
         bb.seq = rk.seq;
         bb.icode = rk.icode;
@@ -636,14 +638,15 @@ std::vector<ResidueBackbone> BuildBackboneResidues(const std::vector<Atom>& atom
     }
     std::vector<ResidueBackbone> out;
     out.reserve(byRes.size());
-    for (const auto& kv : byRes) {
+    for (const auto &kv : byRes) {
         out.push_back(kv.second);
     }
     std::sort(out.begin(), out.end(), ResidueBackboneLess);
     return out;
 }
 
-float DsspHydrogenBondEnergy(const glm::vec3& nPos, const glm::vec3& hPos, const glm::vec3& cPos, const glm::vec3& oPos) {
+float DsspHydrogenBondEnergy(const glm::vec3 &nPos, const glm::vec3 &hPos, const glm::vec3 &cPos,
+                             const glm::vec3 &oPos) {
     const float rON = glm::distance(oPos, nPos);
     const float rCH = glm::distance(cPos, hPos);
     const float rOH = glm::distance(oPos, hPos);
@@ -655,7 +658,7 @@ float DsspHydrogenBondEnergy(const glm::vec3& nPos, const glm::vec3& hPos, const
     return 27.888f * ((1.0f / rON) + (1.0f / rCH) - (1.0f / rOH) - (1.0f / rCN));
 }
 
-std::vector<std::uint8_t> AssignSecondaryStructureDsspLike(const std::vector<Atom>& atoms) {
+std::vector<std::uint8_t> AssignSecondaryStructureDsspLike(const std::vector<Atom> &atoms) {
     std::vector<std::uint8_t> atomSs(atoms.size(), static_cast<std::uint8_t>(SSType::Coil));
     std::vector<ResidueBackbone> residues = BuildBackboneResidues(atoms);
     if (residues.size() < 4) {
@@ -668,8 +671,8 @@ std::vector<std::uint8_t> AssignSecondaryStructureDsspLike(const std::vector<Ato
         if (residues[i].chain != residues[i - 1].chain) {
             continue;
         }
-        const ResidueBackbone& cur = residues[i];
-        const ResidueBackbone& prev = residues[i - 1];
+        const ResidueBackbone &cur = residues[i];
+        const ResidueBackbone &prev = residues[i - 1];
         if (cur.n < 0 || prev.c < 0 || prev.o < 0) {
             continue;
         }
@@ -759,18 +762,21 @@ std::vector<std::uint8_t> AssignSecondaryStructureDsspLike(const std::vector<Ato
     }
 
     for (size_t ri = 0; ri < residues.size(); ++ri) {
-        const ResidueBackbone& r = residues[ri];
+        const ResidueBackbone &r = residues[ri];
         if (r.ca >= 0) {
             atomSs[static_cast<size_t>(r.ca)] = static_cast<std::uint8_t>(resSs[ri]);
         }
         if (r.n >= 0) {
-            atomSs[static_cast<size_t>(r.n)] = static_cast<std::uint8_t>(SsMerge(static_cast<SSType>(atomSs[static_cast<size_t>(r.n)]), resSs[ri]));
+            atomSs[static_cast<size_t>(r.n)] = static_cast<std::uint8_t>(
+                SsMerge(static_cast<SSType>(atomSs[static_cast<size_t>(r.n)]), resSs[ri]));
         }
         if (r.c >= 0) {
-            atomSs[static_cast<size_t>(r.c)] = static_cast<std::uint8_t>(SsMerge(static_cast<SSType>(atomSs[static_cast<size_t>(r.c)]), resSs[ri]));
+            atomSs[static_cast<size_t>(r.c)] = static_cast<std::uint8_t>(
+                SsMerge(static_cast<SSType>(atomSs[static_cast<size_t>(r.c)]), resSs[ri]));
         }
         if (r.o >= 0) {
-            atomSs[static_cast<size_t>(r.o)] = static_cast<std::uint8_t>(SsMerge(static_cast<SSType>(atomSs[static_cast<size_t>(r.o)]), resSs[ri]));
+            atomSs[static_cast<size_t>(r.o)] = static_cast<std::uint8_t>(
+                SsMerge(static_cast<SSType>(atomSs[static_cast<size_t>(r.o)]), resSs[ri]));
         }
     }
     return atomSs;
@@ -782,7 +788,7 @@ struct BridgePair {
     bool parallel = true;
 };
 
-bool InRange(const std::vector<std::vector<bool>>& hb, int i, int j) {
+bool InRange(const std::vector<std::vector<bool>> &hb, int i, int j) {
     if (i < 0 || j < 0) {
         return false;
     }
@@ -792,7 +798,7 @@ bool InRange(const std::vector<std::vector<bool>>& hb, int i, int j) {
     return hb[static_cast<size_t>(i)][static_cast<size_t>(j)];
 }
 
-std::vector<char> AssignSecondaryStructureStrictDssp(const std::vector<Atom>& atoms) {
+std::vector<char> AssignSecondaryStructureStrictDssp(const std::vector<Atom> &atoms) {
     std::vector<ResidueBackbone> residues = BuildBackboneResidues(atoms);
     std::vector<char> labels(residues.size(), 'C');
     if (residues.size() < 4) {
@@ -805,8 +811,8 @@ std::vector<char> AssignSecondaryStructureStrictDssp(const std::vector<Atom>& at
         if (residues[i].chain != residues[i - 1].chain) {
             continue;
         }
-        const ResidueBackbone& cur = residues[i];
-        const ResidueBackbone& prev = residues[i - 1];
+        const ResidueBackbone &cur = residues[i];
+        const ResidueBackbone &prev = residues[i - 1];
         if (cur.n < 0 || prev.c < 0 || prev.o < 0) {
             continue;
         }
@@ -939,7 +945,7 @@ std::vector<char> AssignSecondaryStructureStrictDssp(const std::vector<Atom>& at
         }
     }
 
-    std::sort(bridges.begin(), bridges.end(), [](const BridgePair& a, const BridgePair& b) {
+    std::sort(bridges.begin(), bridges.end(), [](const BridgePair &a, const BridgePair &b) {
         if (a.parallel != b.parallel) {
             return a.parallel < b.parallel;
         }
@@ -968,7 +974,7 @@ std::vector<char> AssignSecondaryStructureStrictDssp(const std::vector<Atom>& at
             }
         }
         if (ladder.size() >= 2) {
-            for (const BridgePair& b : ladder) {
+            for (const BridgePair &b : ladder) {
                 promotedE[static_cast<size_t>(b.i)] = true;
                 promotedE[static_cast<size_t>(b.j)] = true;
             }
@@ -983,8 +989,9 @@ std::vector<char> AssignSecondaryStructureStrictDssp(const std::vector<Atom>& at
     return labels;
 }
 
-std::vector<std::uint8_t> MapResidueLabelsToAtomSs(const std::vector<Atom>& atoms, const std::vector<ResidueBackbone>& residues,
-                                                   const std::vector<char>& labels) {
+std::vector<std::uint8_t> MapResidueLabelsToAtomSs(const std::vector<Atom> &atoms,
+                                                   const std::vector<ResidueBackbone> &residues,
+                                                   const std::vector<char> &labels) {
     std::vector<std::uint8_t> atomSs(atoms.size(), static_cast<std::uint8_t>(SSType::Coil));
     for (size_t ri = 0; ri < residues.size() && ri < labels.size(); ++ri) {
         SSType s = SSType::Coil;
@@ -994,7 +1001,7 @@ std::vector<std::uint8_t> MapResidueLabelsToAtomSs(const std::vector<Atom>& atom
         } else if (lab == 'E' || lab == 'B') {
             s = SSType::Strand;
         }
-        const ResidueBackbone& r = residues[ri];
+        const ResidueBackbone &r = residues[ri];
         if (r.ca >= 0) {
             atomSs[static_cast<size_t>(r.ca)] = static_cast<std::uint8_t>(s);
         }
@@ -1014,10 +1021,11 @@ std::vector<std::uint8_t> MapResidueLabelsToAtomSs(const std::vector<Atom>& atom
     return atomSs;
 }
 
-void FinishProteinModel(Protein& protein, const std::set<std::pair<int, int>>& serialEdges,
-                        const std::vector<std::string>& helixLines, const std::vector<std::string>& sheetLines,
-                        const std::vector<SecondaryStructureRange>& mmcifRanges) {
-    const auto& atoms = protein.GetAtoms();
+void FinishProteinModel(Protein &protein, const std::set<std::pair<int, int>> &serialEdges,
+                        const std::vector<std::string> &helixLines,
+                        const std::vector<std::string> &sheetLines,
+                        const std::vector<SecondaryStructureRange> &mmcifRanges) {
+    const auto &atoms = protein.GetAtoms();
     std::unordered_map<int, int> serialToIndex;
     serialToIndex.reserve(atoms.size() * 2);
     for (size_t i = 0; i < atoms.size(); ++i) {
@@ -1027,7 +1035,7 @@ void FinishProteinModel(Protein& protein, const std::set<std::pair<int, int>>& s
     }
 
     std::set<std::pair<int, int>> indexEdges;
-    for (const auto& e : serialEdges) {
+    for (const auto &e : serialEdges) {
         const auto it0 = serialToIndex.find(e.first);
         const auto it1 = serialToIndex.find(e.second);
         if (it0 != serialToIndex.end() && it1 != serialToIndex.end()) {
@@ -1055,7 +1063,7 @@ void FinishProteinModel(Protein& protein, const std::set<std::pair<int, int>>& s
     } else {
         atomSs = AssignSecondaryStructureDsspLike(atoms);
     }
-    for (const std::string& hl : helixLines) {
+    for (const std::string &hl : helixLines) {
         char ca = ' ';
         char cb = ' ';
         int sa = 0;
@@ -1067,7 +1075,7 @@ void FinishProteinModel(Protein& protein, const std::set<std::pair<int, int>>& s
             ApplySsRange(atomSs, atoms, ca, sa, sb, SSType::Helix);
         }
     }
-    for (const std::string& sl : sheetLines) {
+    for (const std::string &sl : sheetLines) {
         char ca = ' ';
         char cb = ' ';
         int sa = 0;
@@ -1079,7 +1087,7 @@ void FinishProteinModel(Protein& protein, const std::set<std::pair<int, int>>& s
             ApplySsRange(atomSs, atoms, ca, sa, sb, SSType::Strand);
         }
     }
-    for (const SecondaryStructureRange& r : mmcifRanges) {
+    for (const SecondaryStructureRange &r : mmcifRanges) {
         if (r.type == SSType::Coil) {
             continue;
         }
@@ -1094,11 +1102,9 @@ void FinishProteinModel(Protein& protein, const std::set<std::pair<int, int>>& s
 
 } // namespace detail
 
-void PDBParser::SetStrictDsspMode(bool enabled) {
-    detail::g_StrictDsspMode = enabled;
-}
+void PDBParser::SetStrictDsspMode(bool enabled) { detail::g_StrictDsspMode = enabled; }
 
-Protein PDBParser::ParsePDBFile(const std::string& filepath) {
+Protein PDBParser::ParsePDBFile(const std::string &filepath) {
     Protein protein;
     protein.SetName(filepath);
 
@@ -1245,12 +1251,13 @@ Protein PDBParser::ParsePDBFile(const std::string& filepath) {
     return protein;
 }
 
-void PDBParser::FinalizeStructure(Protein& protein, const std::set<std::pair<int, int>>& serialEdges,
-                                  const std::vector<std::string>& helixLines, const std::vector<std::string>& sheetLines,
-                                  const std::vector<SecondaryStructureRange>& mmcifRanges) {
+void PDBParser::FinalizeStructure(Protein &protein, const std::set<std::pair<int, int>> &serialEdges,
+                                  const std::vector<std::string> &helixLines,
+                                  const std::vector<std::string> &sheetLines,
+                                  const std::vector<SecondaryStructureRange> &mmcifRanges) {
     detail::FinishProteinModel(protein, serialEdges, helixLines, sheetLines, mmcifRanges);
 }
 
-void PDBParser::ApplyAtomSiteAltLoc(std::vector<Atom>& rawAtoms, Protein& protein) {
+void PDBParser::ApplyAtomSiteAltLoc(std::vector<Atom> &rawAtoms, Protein &protein) {
     detail::ApplyAltLocChoice(rawAtoms, protein);
 }

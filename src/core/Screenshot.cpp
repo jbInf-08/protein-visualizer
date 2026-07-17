@@ -7,7 +7,7 @@
 
 #include <vector>
 
-bool SaveFramebufferPngRgb(int width, int height, const std::string& filepath) {
+bool SaveFramebufferPngRgb(int width, int height, const std::string &filepath) {
     if (width <= 0 || height <= 0) {
         return false;
     }

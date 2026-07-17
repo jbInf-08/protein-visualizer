@@ -7,23 +7,23 @@
 enum class VisualizationMode { BallAndStick, SpaceFilling, Ribbon, Cartoon };
 
 class Renderer {
-public:
+  public:
     Renderer();
     ~Renderer();
 
-    Renderer(const Renderer&) = delete;
-    Renderer& operator=(const Renderer&) = delete;
+    Renderer(const Renderer &) = delete;
+    Renderer &operator=(const Renderer &) = delete;
 
     void SetVisualizationMode(VisualizationMode mode);
     VisualizationMode GetVisualizationMode() const { return m_CurrentMode; }
 
-    void SetProtein(const Protein* protein);
+    void SetProtein(const Protein *protein);
 
-    void Draw(int viewportWidth, int viewportHeight, const glm::mat4& view, const glm::mat4& projection);
+    void Draw(int viewportWidth, int viewportHeight, const glm::mat4 &view, const glm::mat4 &projection);
 
     static float RadiusScaleForMode(VisualizationMode mode, float vdwRadius);
 
-private:
+  private:
     void EnsureGpuReady();
     void RebuildInstanceBuffer();
     void RebuildCylinderInstanceBuffer();
@@ -31,7 +31,7 @@ private:
     void CreateGeometryBuffers(int sphereStacks, int sphereSlices, int cylinderSlices);
 
     VisualizationMode m_CurrentMode = VisualizationMode::BallAndStick;
-    const Protein* m_Protein = nullptr;
+    const Protein *m_Protein = nullptr;
     bool m_InstancesDirty = true;
     bool m_CylinderInstancesDirty = true;
 

@@ -10,8 +10,8 @@ namespace Picking {
 
 /// Screen-space mouse position in framebuffer pixels (origin top-left, same as GLFW).
 /// Returns closest hit atom index along the view ray, or `std::nullopt` if none.
-std::optional<int> PickAtomIndexScreen(const Protein& protein, float mouseX, float mouseY, int framebufferWidth,
-                                         int framebufferHeight, const glm::mat4& view, const glm::mat4& projection,
-                                         VisualizationMode mode);
+std::optional<int> PickAtomIndexScreen(const Protein &protein, float mouseX, float mouseY,
+                                       int framebufferWidth, int framebufferHeight, const glm::mat4 &view,
+                                       const glm::mat4 &projection, VisualizationMode mode);
 
 } // namespace Picking
